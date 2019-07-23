@@ -1,9 +1,17 @@
-# Map render with BSP
+# Map render with BSP (Процедурная генерация с помощью BSP)
 
-## Setup
+## Setup (Установка)
 
 npm install
 
-## Run
+## Run (Запуск)
 
-**npm run start** or **node app.js**
+**npm run start** or (или) **node app.js**
+
+Map 80 x 40 blocks (Карта 80 x 40 блоков)
+
+![Image alt](https://github.com/Ikaru90/map-render-bsp/blob/master/client/assets/map_render.png)
+
+Performance in ms (Эффективность в миллисекундах)
+
+![Image alt](https://github.com/Ikaru90/map-render-bsp/blob/master/client/assets/performance.png)
