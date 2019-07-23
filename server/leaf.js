@@ -19,14 +19,14 @@ const Leaf = function (x, y, width, height) {
       return false;
     }
 
-    let splitH = Math.random() > 0.5;
+    let splitByHeight = Math.random() > 0.5;
     if (width > height && width / height >= 1.25) {
-      splitH = false;
+      splitByHeight = false;
     } else if (height > width && height / width >= 1.25) {
-      splitH = true;
+      splitByHeight = true;
     }
 
-    const MAX_LEAF_SIZE = (splitH ? height : width) - MIN_LEAF_SIZE;
+    const MAX_LEAF_SIZE = (splitByHeight ? height : width) - MIN_LEAF_SIZE;
 
     if (MAX_LEAF_SIZE <= MIN_LEAF_SIZE) {
       return false;
@@ -34,7 +34,7 @@ const Leaf = function (x, y, width, height) {
 
     const split = getRandomNumber(MIN_LEAF_SIZE, MAX_LEAF_SIZE);
 
-    if (splitH){
+    if (splitByHeight){
       this.leftChild = new Leaf(x, y, width, split);
       this.rightChild = new Leaf(x, y + split, width, height - split);
     } else {
@@ -54,14 +54,14 @@ const Leaf = function (x, y, width, height) {
       }
     } else {
       const roomSize = {
-        x: getRandomNumber(5, width - 1),
-        y: getRandomNumber(5, height - 1)
+        width: getRandomNumber(5, width - 1),
+        height: getRandomNumber(5, height - 1)
       };
       const roomPos = {
-        x: getRandomNumber(2, width - roomSize.x - 1),
-        y: getRandomNumber(2, height - roomSize.y - 1)
+        x: getRandomNumber(2, width - roomSize.width - 1),
+        y: getRandomNumber(2, height - roomSize.height - 1)
       };
-      this.room = {x: x + roomPos.x, y: y + roomPos.y, width: roomSize.x, height: roomSize.y};
+      this.room = {x: x + roomPos.x, y: y + roomPos.y, width: roomSize.width, height: roomSize.height};
     }
   };
 
@@ -69,14 +69,8 @@ const Leaf = function (x, y, width, height) {
     if (this.room) {
       return this.room;
     }
-    let leftRoom;
-    let rightRoom;
-    if (this.leftChild) {
-      leftRoom = this.leftChild.getRoom();
-    }
-    if (this.rightChild) {
-      rightRoom = this.rightChild.getRoom();
-    }
+    const leftRoom = this.leftChild && this.leftChild.getRoom();;
+    const rightRoom = this.rightChild && this.rightChild.getRoom();
     if (!leftRoom && !rightRoom) {
       return null;
     } else if (!leftRoom) {
@@ -91,63 +85,63 @@ const Leaf = function (x, y, width, height) {
   };
 
   this.createHall = function (leftRoom, rightRoom) {
-    const point1 = {
+    const startPoint = {
       x: getRandomNumber(leftRoom.x + 1, leftRoom.x + leftRoom.width - 1),
       y: getRandomNumber(leftRoom.y + 1, leftRoom.y + leftRoom.height - 1)
     };
-    const point2 = {
+    const finishPoint = {
       x: getRandomNumber(rightRoom.x + 1, rightRoom.x + rightRoom.width - 1),
       y: getRandomNumber(rightRoom.y + 1, rightRoom.y + rightRoom.height - 1)
     };
 
-    const w = point2.x - point1.x;
-    const h = point2.y - point1.y;
+    const w = finishPoint.x - startPoint.x;
+    const h = finishPoint.y - startPoint.y;
 
     if (w < 0)	{
       if (h < 0) {
         if (Math.random() < 0.5) {
-          this.halls.push({x: point2.x, y: point1.y, width: Math.abs(w) + 1, height: 1});
-          this.halls.push({x: point2.x, y: point2.y, width: 1, height: Math.abs(h) + 1});
+          this.halls.push({x: finishPoint.x, y: startPoint.y, width: Math.abs(w) + 1, height: 1});
+          this.halls.push({x: finishPoint.x, y: finishPoint.y, width: 1, height: Math.abs(h) + 1});
         } else {
-          this.halls.push({x: point2.x, y: point2.y, width: Math.abs(w) + 1, height: 1});
-          this.halls.push({x: point1.x, y: point2.y, width: 1, height: Math.abs(h) + 1});
+          this.halls.push({x: finishPoint.x, y: finishPoint.y, width: Math.abs(w) + 1, height: 1});
+          this.halls.push({x: startPoint.x, y: finishPoint.y, width: 1, height: Math.abs(h) + 1});
         }
       } else if (h > 0) {
         if (Math.random() < 0.5) {
-          this.halls.push({x: point2.x, y: point1.y, width: Math.abs(w) + 1, height: 1});
-          this.halls.push({x: point2.x, y: point1.y, width: 1, height: Math.abs(h) + 1});
+          this.halls.push({x: finishPoint.x, y: startPoint.y, width: Math.abs(w) + 1, height: 1});
+          this.halls.push({x: finishPoint.x, y: startPoint.y, width: 1, height: Math.abs(h) + 1});
         } else {
-          this.halls.push({x: point2.x, y: point2.y, width: Math.abs(w) + 1, height: 1});
-          this.halls.push({x: point1.x, y: point1.y, width: 1, height: Math.abs(h) + 1});
+          this.halls.push({x: finishPoint.x, y: finishPoint.y, width: Math.abs(w) + 1, height: 1});
+          this.halls.push({x: startPoint.x, y: startPoint.y, width: 1, height: Math.abs(h) + 1});
         }
       } else {
-        this.halls.push({x: point2.x, y: point2.y, width: Math.abs(w) + 1, height: 1});
+        this.halls.push({x: finishPoint.x, y: finishPoint.y, width: Math.abs(w) + 1, height: 1});
       }
     } else if (w > 0) {
       if (h < 0) {
         if (Math.random() < 0.5) {
-          this.halls.push({x: point1.x, y: point2.y, width: Math.abs(w) + 1, height: 1});
-          this.halls.push({x: point1.x, y: point2.y, width: 1, height: Math.abs(h) + 1});
+          this.halls.push({x: startPoint.x, y: finishPoint.y, width: Math.abs(w) + 1, height: 1});
+          this.halls.push({x: startPoint.x, y: finishPoint.y, width: 1, height: Math.abs(h) + 1});
         } else {
-          this.halls.push({x: point1.x, y: point1.y, width: Math.abs(w) + 1, height: 1});
-          this.halls.push({x: point2.x, y: point2.y, width: 1, height: Math.abs(h) + 1});
+          this.halls.push({x: startPoint.x, y: startPoint.y, width: Math.abs(w) + 1, height: 1});
+          this.halls.push({x: finishPoint.x, y: finishPoint.y, width: 1, height: Math.abs(h) + 1});
         }
       } else if (h > 0) {
         if (Math.random() < 0.5) {
-          this.halls.push({x: point1.x, y: point1.y, width: Math.abs(w) + 1, height: 1});
-          this.halls.push({x: point2.x, y: point1.y, width: 1, height: Math.abs(h) + 1});
+          this.halls.push({x: startPoint.x, y: startPoint.y, width: Math.abs(w) + 1, height: 1});
+          this.halls.push({x: finishPoint.x, y: startPoint.y, width: 1, height: Math.abs(h) + 1});
         } else {
-          this.halls.push({x: point1.x, y: point2.y, width: Math.abs(w) + 1, height: 1});
-          this.halls.push({x: point1.x, y: point1.y, width: 1, height: Math.abs(h) + 1});
+          this.halls.push({x: startPoint.x, y: finishPoint.y, width: Math.abs(w) + 1, height: 1});
+          this.halls.push({x: startPoint.x, y: startPoint.y, width: 1, height: Math.abs(h) + 1});
         }
       } else {
-        this.halls.push({x: point1.x, y: point1.y, width: Math.abs(w) + 1, height: 1});
+        this.halls.push({x: startPoint.x, y: startPoint.y, width: Math.abs(w) + 1, height: 1});
       }
     } else {
       if (h < 0) {
-        this.halls.push({x: point2.x, y: point2.y, width: 1, height: Math.abs(h) + 1});
+        this.halls.push({x: finishPoint.x, y: finishPoint.y, width: 1, height: Math.abs(h) + 1});
       } else if (h > 0) {
-        this.halls.push({x: point1.x, y: point1.y, width: 1, height: Math.abs(h) + 1});
+        this.halls.push({x: startPoint.x, y: startPoint.y, width: 1, height: Math.abs(h) + 1});
       }
     }
   };

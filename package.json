@@ -1,5 +1,5 @@
 {
-  "name": "map-render",
+  "name": "map-render-bsp",
   "version": "1.0.0",
   "description": "Express, websocket, pixi",
   "main": "index.js",
